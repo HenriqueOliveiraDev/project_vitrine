@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Res, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Req, HttpStatus, ValidationPipe, Param } from '@nestjs/common';
 import { PartnerService } from './partner.service'
 import { AddressPartnerService } from 'src/address-partner/address-partner.service';
 import { SocialNetworkingService } from 'src/social-networking/social-networking.service';
 import { PartnerCreateDTO } from 'src/DTO/partner-createDTO';
-import { Response } from 'express';
+import { Response, json } from 'express';
+import { Partner } from './partner.entity';
 
 @Controller('partner')
 export class PartnerController {
@@ -18,23 +19,32 @@ export class PartnerController {
     }
 
     @Post()
-    async create(@Body() partnerDTO: PartnerCreateDTO, @Res() res: Response) {
-        console.log('Partner');
-        console.log(partnerDTO);
-     
-        try{
-            const partner = this.partnerService.create(partnerDTO);            
-            this.socialNetService.create(partnerDTO,(await partner).id_partner);
-            this.addressService.create(partnerDTO, (await partner).id_partner); 
+    async create(@Body(new ValidationPipe({ transform: true })) partnerDTO: PartnerCreateDTO, @Res() res: Response) {
 
-            res.send('Criado com sucesso');
-        }catch(err){
-            res.send('erro ao criar'); 
+        try {
+            const partner = this.partnerService.create(partnerDTO);
+            this.socialNetService.create(partnerDTO, (await partner).id_partner);
+            this.addressService.create(partnerDTO, (await partner).id_partner);
+
+            res.status(200).json({ "message": "Created success" });
+
+        } catch (err) {
+            res.status(400).json({ "message": "Error create" })
         }
     }
 
-    @Get('get_partner:id')
-    getPartnerId(){
-        return 
+    @Get(':id')
+    async getPartnerId(@Param('id') id, @Res() res: Response) {
+        try {
+            let partner = new Partner();
+            partner = await this.partnerService.getPartnerID(id)
+            if (partner) {
+                res.status(200).json(partner);
+            } else {
+                res.status(400).json({ "message": "Partner not found" });
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

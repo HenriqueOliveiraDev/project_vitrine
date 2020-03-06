@@ -7,6 +7,7 @@ import { SocialNetworkingService } from 'src/social-networking/social-networking
 import { SocialNetworkingController } from 'src/social-networking/social-networking.controller';
 import { SocialNetworkingModule } from 'src/social-networking/social-networking.module';
 import { AddressPartnerModule } from 'src/address-partner/address-partner.module';
+import { CriptographyModule } from 'src/criptography/criptography.module';
 
 @Module({
   providers: [
@@ -15,7 +16,7 @@ import { AddressPartnerModule } from 'src/address-partner/address-partner.module
   ],
   controllers: [PartnerController],
   exports: [PartnerService],
-  imports: [ConnectionModule,SocialNetworkingModule,AddressPartnerModule ],
-  
+  imports: [ConnectionModule, SocialNetworkingModule, AddressPartnerModule, CriptographyModule],
+
 })
 export class PartnerModule { }
