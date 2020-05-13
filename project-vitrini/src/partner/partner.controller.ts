@@ -5,6 +5,7 @@ import { SocialNetworkingService } from 'src/partner/social-networking/social-ne
 import { PartnerCreateDTO } from 'src/partner/DTO/partner-createDTO';
 import { Response, json } from 'express';
 import { Partner } from './partner.entity';
+import { PartnerSignInDTO } from './DTO/partner-signinDTO';
 
 @Controller('partner')
 export class PartnerController {
@@ -45,6 +46,36 @@ export class PartnerController {
             }
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    @Get('exists/:email')
+    async getPartnerEmail(@Param('email') email, @Res() res: Response) {
+        try {
+            let partner = new Partner();
+            partner = await this.partnerService.getPartnerEmail(email);
+            if (partner) {
+                res.status(200).json(partner);
+            } else {
+                res.status(400).json({ "message": "Partner not found" });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    @Post('sign-in')
+    async signIn(@Body(new ValidationPipe({ transform: true })) partnerSignInDTO: PartnerSignInDTO, @Res() res: Response) {
+        try{
+            const result  = await this.partnerService.signIn(partnerSignInDTO);
+            if(result){
+                res.status(200).json({"message": result});
+            }else{
+                res.status(200).json({"message": "erro"});
+            }
+
+        }catch(err){
+            console.log(err);
+            
         }
     }
 }
