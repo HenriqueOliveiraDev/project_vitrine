@@ -1,14 +1,15 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { Repository } from 'typeorm'
 import { Partner } from './partner.entity'
 import { PartnerCreateDTO } from 'src/partner/DTO/partner-createDTO';
-import { CriptographyService } from '../criptography/criptography.service'
+import { CriptographyService } from '../auth/criptography/criptography.service'
 import { PartnerSignInDTO } from './DTO/partner-signinDTO';
 
 @Injectable()
 export class PartnerService {
     constructor(
         @Inject('PARTNER_REPOSITORY')
+        @Inject(forwardRef(() => PartnerService))
         private readonly partner: Repository<Partner>,
         private criptography: CriptographyService) { }
     getHelloWord(): String {
@@ -35,30 +36,12 @@ export class PartnerService {
         return await this.partner.save(partner);
     }
 
-    async getPartnerID(id_partner: number): Promise<Partner> {
+    async findOneID(id_partner: number): Promise<Partner> {
         return this.partner.findOne(id_partner);
     }
 
-    async getPartnerEmail(email: string): Promise<Partner>{
+    async findOneEmail(email: string): Promise<Partner>{
         return this.partner.findOne({email:email});
-    }
-
-    async signIn(partnerSignIn: PartnerSignInDTO): Promise<string>{
-        let partner = new Partner();
-        let result;
-
-        partner = await this.getPartnerEmail(partnerSignIn.email);
-         if(partner){
-             const validPassword = await this.criptography.compare(partnerSignIn.password,partner.vPassword);
-            if(validPassword){
-                result = 'Logou';
-            }else{
-                result = 'invalid password';
-            }
-         }else{
-             result = 'invalid email';
-         }
-         return result;
     }
 
 }

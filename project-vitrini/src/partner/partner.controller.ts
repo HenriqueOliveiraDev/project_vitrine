@@ -6,6 +6,7 @@ import { PartnerCreateDTO } from 'src/partner/DTO/partner-createDTO';
 import { Response, json } from 'express';
 import { Partner } from './partner.entity';
 import { PartnerSignInDTO } from './DTO/partner-signinDTO';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('partner')
 export class PartnerController {
@@ -13,6 +14,7 @@ export class PartnerController {
         private partnerService: PartnerService,
         private addressService: AddressPartnerService,
         private socialNetService: SocialNetworkingService,
+        private auth: AuthService,
     ) { }
     @Get()
     get(): String {
@@ -38,7 +40,7 @@ export class PartnerController {
     async getPartnerId(@Param('id') id, @Res() res: Response) {
         try {
             let partner = new Partner();
-            partner = await this.partnerService.getPartnerID(id)
+            partner = await this.partnerService.findOneID(id)
             if (partner) {
                 res.status(200).json(partner);
             } else {
@@ -53,7 +55,7 @@ export class PartnerController {
     async getPartnerEmail(@Param('email') email, @Res() res: Response) {
         try {
             let partner = new Partner();
-            partner = await this.partnerService.getPartnerEmail(email);
+            partner = await this.partnerService.findOneEmail(email);
             if (partner) {
                 res.status(200).json(partner);
             } else {
@@ -66,7 +68,7 @@ export class PartnerController {
     @Post('sign-in')
     async signIn(@Body(new ValidationPipe({ transform: true })) partnerSignInDTO: PartnerSignInDTO, @Res() res: Response) {
         try{
-            const result  = await this.partnerService.signIn(partnerSignInDTO);
+            const result  = await this.auth.signIn(partnerSignInDTO);
             if(result){
                 res.status(200).json({"message": result});
             }else{
