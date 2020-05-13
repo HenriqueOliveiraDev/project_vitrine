@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Partner } from '../partner/partner.entity'
+import { Partner } from '../partner.entity'
 
 @Entity()
 export class SocialNetworking {

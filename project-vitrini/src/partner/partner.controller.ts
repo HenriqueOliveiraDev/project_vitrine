@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Res, Req, HttpStatus, ValidationPipe, Param } from '@nestjs/common';
 import { PartnerService } from './partner.service'
-import { AddressPartnerService } from 'src/address-partner/address-partner.service';
-import { SocialNetworkingService } from 'src/social-networking/social-networking.service';
-import { PartnerCreateDTO } from 'src/DTO/partner-createDTO';
+import { AddressPartnerService } from 'src/partner/address-partner/address-partner.service';
+import { SocialNetworkingService } from 'src/partner/social-networking/social-networking.service';
+import { PartnerCreateDTO } from 'src/partner/DTO/partner-createDTO';
 import { Response, json } from 'express';
 import { Partner } from './partner.entity';
 

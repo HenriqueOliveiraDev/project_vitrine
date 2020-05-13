@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { AddressPartner } from './address-partner.entity'
-import { PartnerCreateDTO } from 'src/DTO/partner-createDTO';
+import { PartnerCreateDTO } from 'src/partner/DTO/partner-createDTO';
 
 @Injectable()
 export class AddressPartnerService {
