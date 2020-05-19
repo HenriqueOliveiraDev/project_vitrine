@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res, Req, HttpStatus, ValidationPipe, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Req, HttpStatus, ValidationPipe, Param, UseGuards, Request } from '@nestjs/common';
 import { PartnerService } from './partner.service'
 import { AddressPartnerService } from 'src/partner/address-partner/address-partner.service';
 import { SocialNetworkingService } from 'src/partner/social-networking/social-networking.service';
@@ -7,6 +7,9 @@ import { Response, json } from 'express';
 import { Partner } from './partner.entity';
 import { PartnerSignInDTO } from './DTO/partner-signinDTO';
 import { AuthService } from 'src/auth/auth.service';
+import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('partner')
 export class PartnerController {
@@ -35,8 +38,8 @@ export class PartnerController {
             res.status(400).json({ "message": "Error create" })
         }
     }
-
-    @Get(':id')
+   
+    @Get('/user/:id')
     async getPartnerId(@Param('id') id, @Res() res: Response) {
         try {
             let partner = new Partner();
@@ -50,7 +53,7 @@ export class PartnerController {
             console.log(err);
         }
     }
-
+    
     @Get('exists/:email')
     async getPartnerEmail(@Param('email') email, @Res() res: Response) {
         try {
@@ -65,6 +68,7 @@ export class PartnerController {
             console.log(err);
         }
     }
+   
     @Post('sign-in')
     async signIn(@Body(new ValidationPipe({ transform: true })) partnerSignInDTO: PartnerSignInDTO, @Res() res: Response) {
         try{
@@ -77,7 +81,15 @@ export class PartnerController {
 
         }catch(err){
             console.log(err);
-            
+
         }
     }
+
+    
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Request() req) {
+      return req;
+    }
+
 }
